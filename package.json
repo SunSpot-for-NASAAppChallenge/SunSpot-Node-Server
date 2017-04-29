@@ -2,8 +2,9 @@
   "name": "sunspot-server",
   "version": "1.0.0",
   "description": "A server that loads weather and other data from various sites whichwill inform users whether it is good idea to go to the beach.",
-  "main": "./src/server.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node ./src/server.js",
     "test": "\"echo \"No tests availabe\"\""
   },
   "repository": {
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/SunSpot-for-NASAAppChallenge/SunSpot-Node-Server/issues"
   },
-  "homepage": "https://github.com/SunSpot-for-NASAAppChallenge/SunSpot-Node-Server#readme"
+  "homepage": "https://github.com/SunSpot-for-NASAAppChallenge/SunSpot-Node-Server#readme",
+    "dependencies": {
+    "request": "^2.78.0"
+  }
 }
