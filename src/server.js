@@ -14,7 +14,9 @@ var responseHeaders = {
 
 //Handles HTTP requests to the server
 function onRequest(request, response){
-    //Base response fro
+    if(request.url == "/favicon.ico"){
+        return;
+    }
     
     //Seperates the query from the rest of the url
     var query = request.url.split('?')[1];
@@ -23,24 +25,54 @@ function onRequest(request, response){
     //PARAMS MUST BE ENCODED WITH encodeURIComponent
     var params = queryString.parse(query);
     
-    //check to make sure there is a url, sends an error if there isn't
-    if(!params.url){
-      //write a 400 error code out
-      response.writeHead(400, responseHeaders);
-      
-      //json error message to respond with
-      var responseMessage = {
-        message: "Missing url parameter in request"
-      };
-      
-      //stringify JSON message and write it to response
-      response.write(JSON.stringify(responseMessage));
-      
-      //send response
-      response.end();
-    }
-    
+    console.dir(request.url);
     console.dir(params);
+    
+    //console.dir(params);
+    try{
+        console.dir(params.action);
+        var actionMissing = !(params.action);
+        console.log(actionMissing);
+        if(actionMissing){
+            console.log("Failure!");
+            //throw a bad request error
+            response.writeHead(400, responseHeaders);
+            
+              //json error message to respond with
+              var responseMessage = {
+                  message: "Please, include an action parameter."
+              };
+            
+              //stringify JSON message and write it to response
+              response.write(JSON.stringify(responseMessage));
+            
+              //send response
+              response.end();
+              
+              return;
+        }
+        console.log("Success!");
+        
+        switch(params.action){
+            case "retrieve":
+                
+                break;
+            default:
+                response.writeHead(400, responseHeaders);
+                
+                var responseMessage = {
+                    message: "This is not a valid action. Possible actions are: retrieve."
+                }
+                
+                response.write(JSON.stringify(responseMessage));
+                
+                response.end();
+                break;
+        }
+    }
+    catch(exception){
+        
+    }
 }
 
 //Creates a server to listen for requests
