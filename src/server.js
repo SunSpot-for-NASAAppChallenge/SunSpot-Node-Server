@@ -2,7 +2,7 @@ var http = require('http');
 var queryString = require('querystring');
 
 var requestHeader = require('request');
-var report = process.env.PORT || process.env.NODE_PORT || 3000;
+var port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 var responseHeaders = {  
     "access-control-allow-origin": "*",
@@ -42,3 +42,6 @@ function onRequest(request, response){
     
     console.dir(params);
 }
+
+//Creates a server to listen for requests
+http.createServer(onRequest).listen(port);
