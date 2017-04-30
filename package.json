@@ -1,9 +1,9 @@
 {
   "name": "sunspot-server",
   "version": "1.0.0",
-  "engines":{
-    "node":"7.9.0",
-    "npm":"4.2.0"
+  "engines": {
+    "node": "7.9.0",
+    "npm": "4.2.0"
   },
   "description": "A server that loads weather and other data from various sites whichwill inform users whether it is good idea to go to the beach.",
   "main": "server.js",
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/SunSpot-for-NASAAppChallenge/SunSpot-Node-Server#readme",
   "dependencies": {
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "shortid": "^2.2.8"
   }
 }

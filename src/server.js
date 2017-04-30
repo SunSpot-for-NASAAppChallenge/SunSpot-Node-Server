@@ -4,6 +4,8 @@ var queryString = require('querystring');
 var requestHeader = require('request');
 var port = process.env.PORT || process.env.NODE_PORT || 3000;
 
+var shortid = require("shortid");
+
 var responseHeaders = {  
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -29,7 +31,7 @@ function onRequest(request, response){
     try{
         console.dir(params.action);
         var actionMissing = !(params.action);
-        console.log(actionMissing);
+        //console.log(actionMissing);
         if(actionMissing){
             //console.log("Failure!");
             //throw a bad request error
@@ -52,7 +54,27 @@ function onRequest(request, response){
         
         switch(params.action){
             case "retrieve":
-                //var msg = "SunSpot brings you your beach report.";
+                response.writeHead(200, responseHeaders);
+                
+                var msg = "SunSpot brings you your beach report.";
+                var uid = shortid.generate();
+                var date = new Date();
+                
+                //creates the response object
+                var responseMessage = {
+                    uid: uid,
+                    date: date.toISOString(),
+                    title: "SunSpots Beach Report for " + date.toDateString(),
+                    mainText: msg,
+                    redirectionURL: "https://notiesoftware.com/sunspots"
+                }
+                //console.dir(response);
+                
+                //writes the response
+                response.write(JSON.stringify(responseMessage));
+                
+                //sends the response
+                response.end();
                 break;
             default:
                 response.writeHead(400, responseHeaders);
@@ -66,9 +88,20 @@ function onRequest(request, response){
                 response.end();
                 break;
         }
+        return;
     }
     catch(exception){
+        response.writeHead(500, responseHeaders);
         
+        var responseMessage = {
+            message: (exception.name + " - " + exception.message)
+        }
+        
+        response.write(JSON.stringify(responseMessage));
+                
+        response.end();
+        
+        return;
     }
 }
 
