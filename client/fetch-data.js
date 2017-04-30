@@ -18,28 +18,37 @@ app.locations = [
         state: "NY",
         country: "us",
         zipcode: "14612",
-        noaa_station: "9052058"
+        noaa_station: "9052058",
+        lat: 43.1854445,
+        lng: -77.6865426
     },
     {
         city: "Beverly Hills",
         state: "NY",
         country: "us",
         zipcode: "90210",
-        noaa_station: "9052058"
+        noaa_station: "9052058",
+        lat: 34.0825439,
+        lng: -118.4345535
     },
     {
         city: "Boston",
         state: "MA",
         country: "us",
         zipcode: "02134",
-        noaa_station: "9052058"
+        noaa_station: "9052058",
+        lat: 42.3132882,
+        lng: -71.1972426
+        
     },
     {
         city: "Melborne",
         state: "FL",
         country: "us",
         zipcode: "32901",
-        noaa_station: "9052058"
+        noaa_station: "9052058",
+        lat: 28.1174627,
+        lng: -80.7253183
     },
 ];
 
@@ -64,8 +73,15 @@ app.fetch = {
         tidesAndCurrents: Object.seal({
             dataType: "jsonp",
             url: "https://tidesandcurrents.noaa.gov/api/datagetter?date=today&station=",
-            format: "[url] [station] &product=water_level&datum=STND&units=metric&time_zone=gmt&application=web_services&format=json",
+            format: "[url] [station] &product=water_temperature&units=english&time_zone=gmt&application=web_services&format=json",
             callback: undefined
+        }),
+        uvIndex: Object.seal({
+            dataType: "jsonp",
+            url: "http://api.openweathermap.org/v3/uvi/",
+            format: "[url] / [lat] , [lng] /current.json?appid= [key]",
+            callback: undefined, //This must be set in setup
+            key: "eae1d0e8e3975649ee03a83327f96fcf"
         })
     }),
     
@@ -96,7 +112,7 @@ app.fetch = {
         //console.log(this.index);
         this.location = Object.seal(app.locations[index])
         this.sites.weather.callback = this.processWeather.bind(this);
-        this.sites.tidesAndCurrents.callback = this.processTides.bind(this);
+        //this.sites.tidesAndCurrents.callback = this.processTides.bind(this);
         
         var numLocations = app.locations.length;
         for(var i = 0;i < numLocations;i++){
@@ -111,7 +127,7 @@ app.fetch = {
         this.reset(loc);
         
         this.retrieveData(this.sites.weather,loc);
-        this.retrieveData(this.sites.tidesAndCurrents,loc);
+        //this.retrieveData(this.sites.tidesAndCurrents,loc);
     },
     
     //Clears result and numItemsLoaded
@@ -143,6 +159,12 @@ app.fetch = {
                     break;
                 case "[zipcode]":
                     url += location.zipcode;
+                    break;
+                case "[lat]":
+                    url += location.lat;
+                    break;
+                case "[lng]":
+                    url += location.lng;
                     break;
                 case "[station]":
                     url += location.noaa_station;
