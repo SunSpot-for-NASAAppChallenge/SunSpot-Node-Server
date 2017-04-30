@@ -26,7 +26,7 @@ app.fetch = {
         weather: Object.seal({
             dataType: "jsonp",
             url:"http://api.openweathermap.org/data/2.5/weather?q=",
-            format: "[url] [city] &appid= [key]",
+            format: "[url] [city] &appid= [key] &units=imperial",
             callback: undefined, //This must be set in setup
             key: "eae1d0e8e3975649ee03a83327f96fcf"
         })
