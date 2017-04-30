@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/SunSpot-for-NASAAppChallenge/SunSpot-Node-Server#readme",
   "dependencies": {
+    "later": "*",
     "request": "^2.81.0"
   }
 }
