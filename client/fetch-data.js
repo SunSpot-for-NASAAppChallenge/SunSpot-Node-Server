@@ -6,15 +6,46 @@
 
 "use strict";
 
+
+var Data = {};
+
 var app = app || {};
+
+
+app.locations = [
+    {
+        city: "Rochester",
+        state: "NY",
+        country: "us",
+        zipcode: "14612",
+        noaa_station: "9052058"
+    },
+    {
+        city: "Beverly Hills",
+        state: "NY",
+        country: "us",
+        zipcode: "90210",
+        noaa_station: "9052058"
+    },
+    {
+        city: "Boston",
+        state: "MA",
+        country: "us",
+        zipcode: "02134",
+        noaa_station: "9052058"
+    },
+    {
+        city: "Rochester",
+        state: "NY",
+        country: "us",
+        zipcode: "32901",
+        noaa_station: "9052058"
+    },
+];
 
 app.fetch = {
     ///////////////////////FIELDS///////////////////////
-    location: Object.seal({
-        city: "Rochester",
-        state: "NY",
-        noaa_station: "9052058"
-    }),
+    location: undefined,
     //Lists all the sites we are getting data from
     //For each site there are the following parameters:
     //  dataType - what the data is being returned as
@@ -25,8 +56,8 @@ app.fetch = {
     sites: Object.seal({
         weather: Object.seal({
             dataType: "jsonp",
-            url:"http://api.openweathermap.org/data/2.5/weather?q=",
-            format: "[url] [city] &appid= [key] &units=imperial",
+            url:"http://api.openweathermap.org/data/2.5/weather?zip=",
+            format: "[url] [zipcode] , [country] &appid= [key] &units=imperial",
             callback: undefined, //This must be set in setup
             key: "eae1d0e8e3975649ee03a83327f96fcf"
         })
@@ -46,7 +77,6 @@ app.fetch = {
             this.air_temp = undefined;
             this.wind = undefined;
             this.clouds = undefined;
-            this.humidity = undefined;
         }
     }),
     numItemsLoaded: 0,
@@ -57,7 +87,10 @@ app.fetch = {
     
     ///////////////////////METHODS///////////////////////
     //Completes any initialization for the project
-    setup: function(){
+    setup: function(index){
+        this.index = index;
+        console.log(this.index);
+        this.location = Object.seal(app.locations[index])
         this.sites.weather.callback = this.processWeather.bind(this);
         //this.sites.tidesAndCurrents.callback = this.processTides.bind(this);
     },
@@ -67,7 +100,7 @@ app.fetch = {
         //console.dir(this);
         this.reset();
         
-        this.retrieveData(this.sites.weather);
+        this.retrieveData(this.sites.weather,this.location);
         //this.retrieveData(this.sites.tidesAndCurrents);
     },
     
@@ -79,7 +112,7 @@ app.fetch = {
     
     ///////////////////////API FETCHES///////////////////////
     //Retrieves data from a given site
-    retrieveData: function(site){
+    retrieveData: function(site,location){
         console.dir(site);
         
         var url = "";
@@ -90,10 +123,16 @@ app.fetch = {
                     url += site.url;
                     break;
                 case "[city]":
-                    url += this.location.city;
+                    url += location.city;
+                    break;
+                case "[country]":
+                    url += location.country;
+                    break;
+                case "[zipcode]":
+                    url += location.zipcode;
                     break;
                 case "[station]":
-                    url += this.location.noaa_station;
+                    url += location.noaa_station;
                 case "[key]":
                     url += site.key;
                     break;
@@ -111,7 +150,7 @@ app.fetch = {
             console.log(err);
             console.log(body);
             var jsonToReturn = JSON.parse(body)
-            callback(jsonToReturn);
+            callback(jsonToReturn,location);
         });
         
         // var $ = require('jquery');
@@ -125,43 +164,41 @@ app.fetch = {
     
     ///////////////////////CALLBACK///////////////////////
     //Increments the number of items loaded by one, and 
-    updateNumItems(){
+    updateNumItems(location){
         this.numItemsLoaded++;
         console.log(this.itemsExpected);
         if(this.numItemsLoaded >= this.itemsExpected){
-                console.log("HERE1");
             if(this.returnResults != undefined){
-                console.log("HERE2");
-                this.returnResults(this.result);
+                console.log("== "+location.zipcode);
+                this.returnResults(this.result,location);
             }
         }
     },
     
     //Takes the data from the 
-    processWeather: function(obj){
+    processWeather: function(obj,location){
         this.result.air_temp = obj.main.temp;
         this.result.wind = obj.wind;
         this.result.clouds = obj.clouds;
-        this.result.humidity = obj.humidity;
     
         console.log("Weather loaded!");
         
-        this.updateNumItems();
+        this.updateNumItems(location);
     },
     
-     processTides: function(obj){
+     processTides: function(obj,location){
         console.dir(obj);
     
         console.log("Tides loaded!");
         
-        this.updateNumItems();
+        this.updateNumItems(location);
     },
     
-    dataLoaded: function(obj){
+    dataLoaded: function(obj,location){
         console.log("Data loaded!");
         console.dir(obj);
         
-        this.updateNumItems();
+        this.updateNumItems(location);
     }
 };
 
