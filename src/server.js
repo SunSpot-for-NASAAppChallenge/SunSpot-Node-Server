@@ -3,6 +3,10 @@ var queryString = require('querystring');
 
 var requestHeader = require('request');
 var port = process.env.PORT || process.env.NODE_PORT || 3000;
+var Global = {
+    data : null
+};
+
 
 var responseHeaders = {  
     "access-control-allow-origin": "*",
@@ -35,6 +39,7 @@ function onRequest(request, response){
       
       //stringify JSON message and write it to response
       response.write(JSON.stringify(responseMessage));
+      console.log("message printed");
       
       //send response
       response.end();
@@ -42,6 +47,25 @@ function onRequest(request, response){
     
     console.dir(params);
 }
-
 //Creates a server to listen for requests
-http.createServer(onRequest).listen(port);
+const server = http.createServer(onRequest);
+server.listen(port);
+var later = require('later');
+var sched = later.parse.recur().every(1).minute();
+later.date.UTC();
+var getData = later.setInterval(getDataFromSources,sched);
+getDataFromSources()
+
+function getDataFromSources() {
+    console.log("getting from data sources");
+    var weatherData = require('../client/fetch-data.js');
+    weatherData.fetch.returnResults = getResults;
+    weatherData.fetch.setup();
+    var data = weatherData.fetch.fetch.bind(weatherData.fetch);
+    data();
+}
+
+
+function getResults(results) {
+  Global.data = results;
+}

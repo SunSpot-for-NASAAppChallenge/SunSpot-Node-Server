@@ -63,6 +63,7 @@ app.fetch = {
     
     //Fetches the data for the project
     fetch: function(){
+        //console.dir(this);
         this.reset();
         
         this.retrieveData(this.sites.weather);
@@ -101,22 +102,35 @@ app.fetch = {
             }
         }
         
-        var callback = (site.callback?site.callback:this.dataLoaded);
+        var callback = (site.callback?site.callback:this.dataLoaded).bind(app.fetch);
         
-        $.ajax({
-            dataType: site.dataType,
-            url: url,
-            data: null,
-            success: callback
-        })
+        var request = require('request')
+        console.log(url);
+        request(url, function(err,res, body) {
+            console.log(err);
+            console.log(body);
+            var jsonToReturn = JSON.parse(body)
+            callback(jsonToReturn);
+        });
+        
+        // var $ = require('jquery');
+        // $.ajax({
+            // dataType: site.dataType,
+            // url: url,
+            // data: null,
+            // success: callback
+        // })
     },
     
     ///////////////////////CALLBACK///////////////////////
     //Increments the number of items loaded by one, and 
     updateNumItems(){
         this.numItemsLoaded++;
+        console.log(this.itemsExpected);
         if(this.numItemsLoaded >= this.itemsExpected){
+                console.log("HERE1");
             if(this.returnResults != undefined){
+                console.log("HERE2");
                 this.returnResults(this.result);
             }
         }
@@ -148,3 +162,5 @@ app.fetch = {
         this.updateNumItems();
     }
 };
+
+module.exports = app;
