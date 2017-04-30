@@ -4,7 +4,7 @@ var queryString = require('querystring');
 var requestHeader = require('request');
 var port = process.env.PORT || process.env.NODE_PORT || 3000;
 var Global = {
-    data : null
+    data : {}
 };
 
 
@@ -35,6 +35,7 @@ function onRequest(request, response){
     try{
         console.dir(params.action);
         var actionMissing = !(params.action);
+        var zipcodeMissing = !(params.zipcode);
         //console.log(actionMissing);
         if(actionMissing){
             //console.log("Failure!");
@@ -56,6 +57,7 @@ function onRequest(request, response){
         }
         //console.log("Success!");
         
+
         switch(params.action){
             case "retrieve":
                 var count = 0;
@@ -149,14 +151,21 @@ getDataFromSources()
 
 function getDataFromSources() {
     console.log("getting from data sources");
+    var locations = require('../client/fetch-data.js').locations;
     var weatherData = require('../client/fetch-data.js');
-    weatherData.fetch.returnResults = getResults;
-    weatherData.fetch.setup();
-    var data = weatherData.fetch.fetch.bind(weatherData.fetch);
-    data();
+    for(var i=0 ; i<locations.length ; i++ ) {
+        console.log("--"+i)
+        weatherData.fetch.returnResults = getResults;
+        weatherData.fetch.setup(i);
+        var zip = weatherData.fetch.location.zipcode
+        console.log(zip);
+        var data = weatherData.fetch.fetch.bind(weatherData.fetch);
+        data();
+    }
 }
 
 
-function getResults(results) {
-  Global.data = results;
+function getResults(results,location) {
+    console.log("~ "+JSON.stringify(location.zipcode));
+    Global.data[location.zipcode]= results;
 }
