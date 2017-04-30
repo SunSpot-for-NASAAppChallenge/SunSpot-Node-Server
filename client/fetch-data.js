@@ -46,6 +46,7 @@ app.fetch = {
             this.air_temp = undefined;
             this.wind = undefined;
             this.clouds = undefined;
+            this.humidity = undefined;
         }
     }),
     numItemsLoaded: 0,
@@ -141,6 +142,7 @@ app.fetch = {
         this.result.air_temp = obj.main.temp;
         this.result.wind = obj.wind;
         this.result.clouds = obj.clouds;
+        this.result.humidity = obj.humidity;
     
         console.log("Weather loaded!");
         
