@@ -25,16 +25,13 @@ function onRequest(request, response){
     //PARAMS MUST BE ENCODED WITH encodeURIComponent
     var params = queryString.parse(query);
     
-    console.dir(request.url);
-    console.dir(params);
-    
     //console.dir(params);
     try{
         console.dir(params.action);
         var actionMissing = !(params.action);
         console.log(actionMissing);
         if(actionMissing){
-            console.log("Failure!");
+            //console.log("Failure!");
             //throw a bad request error
             response.writeHead(400, responseHeaders);
             
@@ -51,11 +48,11 @@ function onRequest(request, response){
               
               return;
         }
-        console.log("Success!");
+        //console.log("Success!");
         
         switch(params.action){
             case "retrieve":
-                
+                //var msg = "SunSpot brings you your beach report.";
                 break;
             default:
                 response.writeHead(400, responseHeaders);
