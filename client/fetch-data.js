@@ -72,10 +72,12 @@ app.fetch = {
     
     result: function(){
         this.air_temp = undefined;
+        this.water_temp = undefined;
         this.wind = undefined;
         this.clouds = undefined;
         this.clear = function(){
             this.air_temp = undefined;
+            this.water_temp = undefined;
             this.wind = undefined;
             this.clouds = undefined;
         };
@@ -95,6 +97,11 @@ app.fetch = {
         this.location = Object.seal(app.locations[index])
         this.sites.weather.callback = this.processWeather.bind(this);
         this.sites.tidesAndCurrents.callback = this.processTides.bind(this);
+        
+        var numLocations = app.locations.length;
+        for(var i = 0;i < numLocations;i++){
+            this.results[app.locations[i].zipcode] = new this.result();
+        }
     },
     
     //Fetches the data for the project
@@ -118,8 +125,8 @@ app.fetch = {
     ///////////////////////API FETCHES///////////////////////
     //Retrieves data from a given site
     retrieveData: function(site,location){
-        console.dir(site);
-        console.dir(location);
+        //console.dir(site);
+        //console.dir(location);
         
         var url = "";
         var elements = site.format.split(" ");
@@ -154,7 +161,7 @@ app.fetch = {
         var request = require('request')
         //console.log(url);
         request(url, function(err,res, body) {
-            console.log(err);
+            //console.log(err);
             //console.log(body);
             var jsonToReturn = JSON.parse(body)
             callback(jsonToReturn,location);
@@ -184,7 +191,8 @@ app.fetch = {
     
     //Takes the data from the 
     processWeather: function(obj,location){
-        var result = this.results[location.zipcode] || new this.result();
+        //var result = this.results[location.zipcode] || new this.result();
+        var result = this.results[location.zipcode]
         result.air_temp = obj.main.temp;
         result.wind = obj.wind;
         result.clouds = obj.clouds;
@@ -195,7 +203,10 @@ app.fetch = {
     },
     
      processTides: function(obj,location){
-        var result = this.results[location.zipcode] || new this.result();
+        console.dir(obj);
+        //var result = this.results[location.zipcode] || new this.result();
+        var result = this.results[location.zipcode];
+        result.water_temp 
          
         //console.dir(obj);
     
@@ -205,8 +216,8 @@ app.fetch = {
     },
     
     dataLoaded: function(obj,location){
-        var result = this.results[location.zipcode] || new this.result();
-        
+        //var result = this.results[location.zipcode] || new this.result();
+        var result = this.results[location.zipcode]
         console.log("Data loaded!");
         //console.dir(obj);
         
