@@ -58,17 +58,47 @@ function onRequest(request, response){
         
         switch(params.action){
             case "retrieve":
+                var count = 0;
+                
                 response.writeHead(200, responseHeaders);
                 
-                var msg = "SunSpot brings you your beach report.";
                 var uid = shortid.generate();
                 var date = new Date();
+                
+                var msg = "SunSpot brings you your beach report.";
+                
+                msg += " The air temperature is " + Math.round(Global.data.air_temp) + " degrees Fahrenheit.";
+                if(Global.data.air_temp > 70){
+                    msg += " Perfect!";
+                    count++;
+                } else{
+                    msg += " It may be too cold for swimming."
+                }
+                
+                /*
+                msg += " The water temperature is " + Global.data.water_temp + "degrees Fahrenheit.";
+                if(Global.data.water_temp > 70){
+                    msg += " Enjoy the water.";
+                    count++;
+                } else{
+                    msg += " It may be too cold for swimming."
+                }*/
+                
+                msg += " The cloud cover is " + Global.data.clouds.all + " percent.";
+                if(Global.data.clouds < 50){
+                    msg += " Nice and sunny.";
+                    count++;
+                } else{
+                    msg += " You might not be able to get a tan.";
+                }
+                
+                msg += " The wind is blowing at " + Math.round(Global.data.wind.speed) + " miles per hour from " + Global.data.wind.deg + " degrees from the North";
                 
                 //creates the response object
                 var responseMessage = {
                     uid: uid,
                     date: date.toISOString(),
-                    title: "SunSpots Beach Report for " + date.toDateString(),
+                    title: "SunSpot Beach Report for " + date.toDateString(),
                     mainText: msg,
                     redirectionURL: "https://notiesoftware.com/sunspots"
                 }
