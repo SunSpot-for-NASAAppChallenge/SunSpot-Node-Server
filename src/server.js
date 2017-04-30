@@ -118,11 +118,22 @@ function onRequest(request, response){
                 //sends the response
                 response.end();
                 break;
+            case "get-details":
+                response.writeHead(200, responseHeaders);
+                
+                var responseMessage = Global.data[zip];
+                
+                //writes the response
+                response.write(JSON.stringify(responseMessage));
+                
+                //sends the response
+                response.end();
+                break;
             default:
                 response.writeHead(400, responseHeaders);
                 
                 var responseMessage = {
-                    message: "This is not a valid action. Possible actions are: retrieve."
+                    message: "This is not a valid action. Possible actions are: retrieve,get-details."
                 }
                 
                 response.write(JSON.stringify(responseMessage));
