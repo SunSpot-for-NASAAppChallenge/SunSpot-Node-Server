@@ -93,7 +93,7 @@ function onRequest(request, response){
                 }*/
                 
                 msg += " The cloud cover is " + data.clouds.all + " percent.";
-                if(data.clouds < 50){
+                if(data.clouds.all < 50){
                     msg += " Nice and sunny.";
                     count++;
                 } else{
@@ -166,7 +166,7 @@ function getDataFromSources() {
         var zip = weatherData.fetch.location.zipcode
         console.log(zip);
         var data = weatherData.fetch.fetch.bind(weatherData.fetch);
-        data();
+        data(i);
     }
 }
 

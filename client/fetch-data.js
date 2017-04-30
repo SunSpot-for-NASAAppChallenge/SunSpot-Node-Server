@@ -69,16 +69,18 @@ app.fetch = {
         })*/
     }),
     
-    result: Object.seal({
-        air_temp: undefined,
-        wind: undefined,
-        clouds: undefined,
-        clear: function(){
+    
+    result: function(){
+        this.air_temp = undefined;
+        this.wind = undefined;
+        this.clouds = undefined;
+        this.clear = function(){
             this.air_temp = undefined;
             this.wind = undefined;
             this.clouds = undefined;
-        }
-    }),
+        };
+    },
+    results: {},
     numItemsLoaded: 0,
     itemsExpected: 1,
     
@@ -96,17 +98,20 @@ app.fetch = {
     },
     
     //Fetches the data for the project
-    fetch: function(){
+    fetch: function(index){
+        var loc = app.locations[index];
         //console.dir(this);
-        this.reset();
+        this.reset(loc);
         
-        this.retrieveData(this.sites.weather,this.location);
+        this.retrieveData(this.sites.weather,loc);
         //this.retrieveData(this.sites.tidesAndCurrents);
     },
     
     //Clears result and numItemsLoaded
-    reset: function(){
-        this.result.clear();
+    reset: function(loc){
+        if(this.results[loc.zipcode]){
+           this.results[loc.zipcode].clear();
+        }
         this.numItemsLoaded = 0;
     },
     
@@ -114,6 +119,7 @@ app.fetch = {
     //Retrieves data from a given site
     retrieveData: function(site,location){
         console.dir(site);
+        console.dir(location);
         
         var url = "";
         var elements = site.format.split(" ");
@@ -164,41 +170,46 @@ app.fetch = {
     
     ///////////////////////CALLBACK///////////////////////
     //Increments the number of items loaded by one, and 
-    updateNumItems(location){
+    updateNumItems(location,result){
         this.numItemsLoaded++;
         console.log(this.itemsExpected);
         if(this.numItemsLoaded >= this.itemsExpected){
             if(this.returnResults != undefined){
                 console.log("== "+location.zipcode);
-                this.returnResults(this.result,location);
+                this.returnResults(result,location);
             }
         }
     },
     
     //Takes the data from the 
     processWeather: function(obj,location){
-        this.result.air_temp = obj.main.temp;
-        this.result.wind = obj.wind;
-        this.result.clouds = obj.clouds;
+        var result = this.results[location.zipcode] || new this.result();
+        result.air_temp = obj.main.temp;
+        result.wind = obj.wind;
+        result.clouds = obj.clouds;
     
         console.log("Weather loaded!");
         
-        this.updateNumItems(location);
+        this.updateNumItems(location,result);
     },
     
      processTides: function(obj,location){
+        var result = this.results[location.zipcode] || new this.result();
+         
         console.dir(obj);
     
         console.log("Tides loaded!");
         
-        this.updateNumItems(location);
+        this.updateNumItems(location,result);
     },
     
     dataLoaded: function(obj,location){
+        var result = this.results[location.zipcode] || new this.result();
+        
         console.log("Data loaded!");
         console.dir(obj);
         
-        this.updateNumItems(location);
+        this.updateNumItems(location,result);
     }
 };
 
