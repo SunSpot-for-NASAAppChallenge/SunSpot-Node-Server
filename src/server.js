@@ -68,9 +68,9 @@ function onRequest(request, response){
                 var responseMessage = {
                     uid: uid,
                     date: date.toISOString(),
-                    title: "SunSpots Beach Report for " + date.toDateString(),
+                    title: "SunSpot's Beach Report for " + date.toDateString(),
                     mainText: msg,
-                    redirectionURL: "https://notiesoftware.com/sunspots"
+                    redirectionURL: "https://notiesoftware.com/sunspot"
                 }
                 //console.dir(response);
                 
