@@ -35,8 +35,8 @@ app.locations = [
         noaa_station: "9052058"
     },
     {
-        city: "Rochester",
-        state: "NY",
+        city: "Melborne",
+        state: "FL",
         country: "us",
         zipcode: "32901",
         noaa_station: "9052058"
@@ -60,13 +60,13 @@ app.fetch = {
             format: "[url] [zipcode] , [country] &appid= [key] &units=imperial",
             callback: undefined, //This must be set in setup
             key: "eae1d0e8e3975649ee03a83327f96fcf"
-        })
-        /*tidesAndCurrents: Object.seal({
+        }),
+        tidesAndCurrents: Object.seal({
             dataType: "jsonp",
             url: "https://tidesandcurrents.noaa.gov/api/datagetter?date=today&station=",
-            format: "[url] [station] &product=water_level&datum=STND&units=metric&time_zone=gmt&application=web_services&format=xml",
+            format: "[url] [station] &product=water_level&datum=STND&units=metric&time_zone=gmt&application=web_services&format=json",
             callback: undefined
-        })*/
+        })
     }),
     
     
@@ -82,7 +82,7 @@ app.fetch = {
     },
     results: {},
     numItemsLoaded: 0,
-    itemsExpected: 1,
+    itemsExpected: 2,
     
     //Function pointer for when the program is done loading
     returnResults: undefined,
@@ -91,10 +91,10 @@ app.fetch = {
     //Completes any initialization for the project
     setup: function(index){
         this.index = index;
-        console.log(this.index);
+        //console.log(this.index);
         this.location = Object.seal(app.locations[index])
         this.sites.weather.callback = this.processWeather.bind(this);
-        //this.sites.tidesAndCurrents.callback = this.processTides.bind(this);
+        this.sites.tidesAndCurrents.callback = this.processTides.bind(this);
     },
     
     //Fetches the data for the project
@@ -104,7 +104,7 @@ app.fetch = {
         this.reset(loc);
         
         this.retrieveData(this.sites.weather,loc);
-        //this.retrieveData(this.sites.tidesAndCurrents);
+        this.retrieveData(this.sites.tidesAndCurrents,loc);
     },
     
     //Clears result and numItemsLoaded
@@ -139,6 +139,7 @@ app.fetch = {
                     break;
                 case "[station]":
                     url += location.noaa_station;
+                    break;
                 case "[key]":
                     url += site.key;
                     break;
@@ -151,10 +152,10 @@ app.fetch = {
         var callback = (site.callback?site.callback:this.dataLoaded).bind(app.fetch);
         
         var request = require('request')
-        console.log(url);
+        //console.log(url);
         request(url, function(err,res, body) {
             console.log(err);
-            console.log(body);
+            //console.log(body);
             var jsonToReturn = JSON.parse(body)
             callback(jsonToReturn,location);
         });
@@ -172,10 +173,10 @@ app.fetch = {
     //Increments the number of items loaded by one, and 
     updateNumItems(location,result){
         this.numItemsLoaded++;
-        console.log(this.itemsExpected);
+        //console.log(this.itemsExpected);
         if(this.numItemsLoaded >= this.itemsExpected){
             if(this.returnResults != undefined){
-                console.log("== "+location.zipcode);
+                //console.log("== "+location.zipcode);
                 this.returnResults(result,location);
             }
         }
@@ -196,7 +197,7 @@ app.fetch = {
      processTides: function(obj,location){
         var result = this.results[location.zipcode] || new this.result();
          
-        console.dir(obj);
+        //console.dir(obj);
     
         console.log("Tides loaded!");
         
@@ -207,7 +208,7 @@ app.fetch = {
         var result = this.results[location.zipcode] || new this.result();
         
         console.log("Data loaded!");
-        console.dir(obj);
+        //console.dir(obj);
         
         this.updateNumItems(location,result);
     }

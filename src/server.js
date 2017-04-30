@@ -68,7 +68,8 @@ function onRequest(request, response){
                 
                 var index = parseInt(zip);
                 var data = Global.data[index];
-                console.log("index = " + index);
+                //console.log("index = " + index);
+                console.log(data);
                 
                 var uid = shortid.generate();
                 var date = new Date();
@@ -106,7 +107,7 @@ function onRequest(request, response){
                 var responseMessage = {
                     uid: uid,
                     date: date.toISOString(),
-                    title: "SunSpot's Beach Report for " + date.toDateString(),
+                    titleText: "SunSpot's Beach Report for " + date.toDateString(),
                     mainText: msg,
                     redirectionURL: "https://notiesoftware.com/sunspot"
                 }
@@ -156,15 +157,15 @@ var getData = later.setInterval(getDataFromSources,sched);
 getDataFromSources()
 
 function getDataFromSources() {
-    console.log("getting from data sources");
+    //console.log("getting from data sources");
     var locations = require('../client/fetch-data.js').locations;
     var weatherData = require('../client/fetch-data.js');
     for(var i=0 ; i<locations.length ; i++ ) {
-        console.log("--"+i)
+        //console.log("--"+i)
         weatherData.fetch.returnResults = getResults;
         weatherData.fetch.setup(i);
         var zip = weatherData.fetch.location.zipcode
-        console.log(zip);
+        //console.log(zip);
         var data = weatherData.fetch.fetch.bind(weatherData.fetch);
         data(i);
     }
